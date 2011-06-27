@@ -278,4 +278,36 @@ public class Resource implements Serializable, RDFexportable
 		rdf = rdf.concat("</irw:Resource>");
 		return rdf ;
 	}
+
+        public String toRSS(String _url_rdf_resources, String _url_html_resources, String _annotated_link)
+        {
+            String rss = "";
+            rss = rss.concat("<item rdf:about=\"").concat(_url_rdf_resources).concat("?id=").concat(id.toString()).concat("\">");
+            rss = rss.concat("<title>").concat(this.label).concat("</title>");
+            //un premier lien vers la ressource elle-même en HTML
+            if(representsResource.getEffectiveURI().equalsIgnoreCase(_url_rdf_resources)) //notre ressource n'est visible que dans notre environnement
+            {
+                rss = rss.concat("<link>").concat(_url_html_resources).concat("?id=").concat(id.toString()).concat("</link>");
+            }
+            else
+                if(representsResource.getEffectiveURI().equalsIgnoreCase(_url_html_resources)) //notre ressource n'est visible que dans notre environnement
+            {
+                rss = rss.concat("<link>").concat(_url_html_resources).concat("?id=").concat(id.toString()).concat("</link>");
+            }
+            else
+                rss = rss.concat("<link>").concat(representsResource.getEffectiveURI()).concat("</link>");
+            //une collection de liens pour les ressources annotées
+            rss = rss.concat(_annotated_link);
+          //  rss = rss.concat("<description>").concat("Ressource créée dans le système le : ").concat(creation.toString()).concat("</description>");
+              rss = rss.concat("<description>").concat(getDescription()).concat("</description>");
+            rss = rss.concat("<rdfs:seeAlso rdf:resource=\"").concat(_url_rdf_resources).concat("?id=").concat(id.toString()).concat("\" />");
+            rss = rss.concat("</item>");
+            return rss ;
+        }
+
+        public String getDescription()
+        {
+            String description = "Ressource créée dans le système le : ".concat(creation.toString()) ;
+            return description ;
+        }
 }
